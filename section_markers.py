@@ -40,7 +40,14 @@ def add_section_markers_to_lyric_xml(lyric_xml, guide_sheet):
 
     # write the modified xml file
     filename = lyric_xml.replace('.xml', '') + '_w_section_markers.xml'
-    lyric_tree.write(filename)
+    root_string = ET.tostring(lyric_root, encoding='unicode')
+    # lyric_tree.write(filename)
+
+    with open(filename, 'w') as output:
+        output.write(declaration)
+        output.write(doctype)
+        output.write('\n')
+        output.write(root_string)
 
 
 def insert_section_marker(measure, marker_text):
