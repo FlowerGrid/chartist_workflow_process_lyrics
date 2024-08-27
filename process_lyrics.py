@@ -64,8 +64,6 @@ def add_section_markers_to_lyric_xml(tk_root, project_path):
         sections = [row for row in reader]
 
     # Open xml file
-
-    # Copy header
     with open(lyric_xml, 'r', encoding='UTF-8') as original_file:
         # Read the declaration and doctype declaration lines
         declaration = original_file.readline()
@@ -75,7 +73,7 @@ def add_section_markers_to_lyric_xml(tk_root, project_path):
     lyric_tree = ET.parse(lyric_xml)    
     lyric_root = lyric_tree.getroot()
 
-    #  Create a hash for measures
+    # Create a hash for measures
     measures = {}
     for m in lyric_root.findall('.//measure'):
         if m.get('number') is not None and int(m.get('number')) not in measures:
@@ -96,7 +94,6 @@ def add_section_markers_to_lyric_xml(tk_root, project_path):
     # write the modified xml file
     filename = lyric_xml.replace('.xml', '') + '_w_section_markers.xml'
     root_string = ET.tostring(lyric_root, encoding='unicode')
-    # lyric_tree.write(filename)
 
     with open(filename, 'w') as output:
         output.write(declaration)
@@ -113,7 +110,7 @@ def write_brackets():
 
 
 def insert_section_marker(measure, marker_text):
-    # print(measure.get('number'))
+    # Add marker elements to measure
     new_marker_element = ET.Element('direction')
     new_marker_element.set('placement', 'above')
     marker_child = ET.Element('direction-type')
@@ -124,20 +121,17 @@ def insert_section_marker(measure, marker_text):
     marker_grandchild.text = marker_text
     marker_child.append(marker_grandchild)
     new_marker_element.append(marker_child)
+
+    # Pretty print
     ET.indent(new_marker_element, space='\t', level=3)
     measure.insert(1, new_marker_element)
     if len(measure) > 2:
         measure[1].tail = '\n' + ('\t'*3)
 
 
-    
-
 if __name__ == '__main__':
-    # lyric_xml = 'I Will Rejoice (#34961) LOGIC score asXML.xml'
-    # guide_sheet = './Workflow Guide Sheet.csv'
     tk_root = Tk()
     go_button = Button(tk_root, text='Choose Project Folder', command= lambda: get_parent_directory(tk_root))
     go_button.pack()
 
     tk_root.mainloop()
-    # add_section_markers_to_lyric_xml(lyric_xml, guide_sheet)
